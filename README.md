@@ -1,3 +1,16 @@
+# Laravel + Vue.js Application
+
+Technology Stack:
+
+- **PHP**: 8.4
+- **Laravel Framework**: 11.31
+- **Docker** for containerization
+- **Nginx** as the web server
+- **PostgreSQL** as the database
+- **Vue.js 3** for the frontend
+- **TailwindCSS** for styling
+- **Vite** for asset building
+
 ## Requirements
 
 - Docker must be installed and running on your system.
