@@ -147,30 +147,34 @@ export default {
             }
         },
         validateForm() {
-            if(!this.form.name) {
-                this.errors.name.push("Name required");
+            this.errors = {
+                name: [],
+                email: [],
+                password: [],
+                passwordConfirmation: [],
+                country: [],
+                language: [],
             }
-            if(!this.form.email) {
-                this.errors.email.push("Email required");
-            } else if (this.validEmail(this.form.email)) {
-                this.errors.email.push("Email not valid");
+
+            this.validateRequired("name", "Name required");
+            this.validateRequired("email", "Email required");
+            if (this.form.email && !this.validEmail(this.form.email)) {
+                this.errors.email.push("Email is not valid");
             }
-            if(!this.form.password) {
-                this.errors.password.push("Password required");
-            } else if (this.form.password.length < 8) {
-                this.errors.password.push("The password field must be at least 8 characters.");
+            this.validateRequired("password", "Password required");
+            if (this.form.password && this.form.password.length < 8) {
+                this.errors.password.push("Password must be at least 8 characters");
             }
-            if(!this.form.passwordConfirmation) {
-                this.errors.passwordConfirmation.push("Confirm password required");
-            }
+            this.validateRequired("passwordConfirmation", "Confirm password required");
             if (this.form.password !== this.form.passwordConfirmation) {
                 this.errors.passwordConfirmation.push("Passwords do not match");
             }
-            if (!this.form.country) {
-                this.errors.country.push("Country required");
-            }
-            if (!this.form.language) {
-                this.errors.language.push("Language required");
+            this.validateRequired("country", "Country required");
+            this.validateRequired("language", "Language required");
+        },
+        validateRequired(field, message) {
+            if (!this.form[field]) {
+                this.errors[field].push(message);
             }
         },
         validEmail: function (email) {
@@ -181,15 +185,6 @@ export default {
             return Object.values(this.errors).some(errorArray => errorArray.length > 0)
         },
         async submitForm() {
-            this.errors = {
-                name: [],
-                email: [],
-                password: [],
-                passwordConfirmation: [],
-                country: [],
-                language: [],
-            }
-
             this.validateForm();
 
             if (!this.hasErrors()) {
