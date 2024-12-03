@@ -24,106 +24,52 @@
         <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
             <h1 class="text-2xl font-bold mb-6 text-gray-800">Register</h1>
             <form @submit.prevent="submitForm" class="space-y-4">
-                <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Name:</label>
-                    <input
-                        id="name"
-                        v-model="form.name"
-                        type="text"
-                        class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-                    />
-                    <div v-for="nameError in errors.name" :key="nameError">
-                        <p class="text-sm text-red-500 mt-2">{{ nameError }}</p>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email:</label>
-                    <input
-                        id="email"
-                        v-model="form.email"
-                        type="text"
-                        class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-                    />
-                    <div v-for="emailError in errors.email" :key="emailError">
-                        <p class="text-sm text-red-500 mt-2">{{ emailError }}</p>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password:</label>
-                    <input
-                        id="password"
-                        v-model="form.password"
-                        type="password"
-                        class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-                    />
-                    <div v-for="passwordError in errors.password" :key="passwordError">
-                        <p class="text-sm text-red-500 mt-2">{{ passwordError }}</p>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="passwordConfirmation" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password:</label>
-                    <input
-                        id="passwordConfirmation"
-                        v-model="form.passwordConfirmation"
-                        type="password"
-                        class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-                    />
-                    <div v-for="passwordConfirmationError in errors.passwordConfirmation" :key="passwordConfirmationError">
-                        <p class="text-sm text-red-500 mt-2">{{ passwordConfirmationError }}</p>
-                    </div>
-                </div>
-
-                <div class="relative">
-                    <label for="country" class="block text-sm font-medium text-gray-700 mb-2">Country:</label>
-                    <div class="relative">
-                        <select
-                            id="country"
-                            v-model="form.country"
-                            @change="fetchLanguages"
-                            :disabled="loadingCountries"
-                            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-                        >
-                            <option value="" disabled>Select a country</option>
-                            <option v-for="country in countries" :key="country" :value="country">
-                                {{ country }}
-                            </option>
-                        </select>
-                        <div v-if="loadingCountries" class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div class="loader w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                        </div>
-                    </div>
-                    <div v-for="countryError in errors.country" :key="countryError">
-                        <p class="text-sm text-red-500 mt-2">{{ countryError }}</p>
-                    </div>
-                </div>
-
-                <div class="relative">
-                    <label for="language" class="block text-sm font-medium text-gray-700 mb-2">Language:</label>
-                    <div class="relative">
-                        <select
-                            id="language"
-                            v-model="form.language"
-                            :disabled="!languages.length || loadingLanguages"
-                            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-                            :class="{ 'bg-gray-200': !languages.length || loadingLanguages }"
-                        >
-                            <option value="" disabled>Select a language</option>
-                            <option v-for="language in languages" :key="language">
-                                {{ language }}
-                            </option>
-                        </select>
-                        <div v-if="loadingLanguages" class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div class="loader w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                        </div>
-                    </div>
-                    <div v-for="languageError in errors.language" :key="languageError">
-                        <p class="text-sm text-red-500 mt-2">{{ languageError }}</p>
-                    </div>
-                </div>
-
+                <Input
+                    id="name"
+                    label="Name:"
+                    v-model="form.name"
+                    :errors="errors.name"
+                />
+                <Input
+                    id="email"
+                    label="Email:"
+                    v-model="form.email"
+                    :errors="errors.email"
+                />
+                <Input
+                    id="password"
+                    label="Password:"
+                    type="password"
+                    v-model="form.password"
+                    :errors="errors.password"
+                />
+                <Input
+                    id="passwordConfirmation"
+                    label="Confirm Password:"
+                    type="password"
+                    v-model="form.passwordConfirmation"
+                    :errors="errors.passwordConfirmation"
+                />
+                <Select
+                    id="country"
+                    label="Country:"
+                    v-model="form.country"
+                    :options="countries"
+                    :errors="errors.country"
+                    :loading="loadingCountries"
+                    placeholder="Select a country"
+                    @update:modelValue="fetchLanguages"
+                />
+                <Select
+                    id="language"
+                    label="Language:"
+                    v-model="form.language"
+                    :options="languages"
+                    :errors="errors?.language"
+                    :loading="loadingLanguages"
+                    :disabled="!languages.length || loadingLanguages"
+                    placeholder="Select a language"
+                />
                 <button
                     type="submit"
                     :disabled="loading"
@@ -138,8 +84,14 @@
 </template>
 
 <script>
+import Input from '@/components/Input.vue';
+import Select from '@/components/Select.vue';
 
 export default {
+    components: {
+        Input,
+        Select,
+    },
     data() {
         return {
             countries: [],
@@ -184,7 +136,6 @@ export default {
             try {
                 const response = await axios.get(`/language/${this.form.country}`);
                 this.languages = response.data;
-                this.errors.language = null;
             } catch (error) {
                 if (error.response?.data?.errors) {
                     this.errors = error.response.data.errors;
